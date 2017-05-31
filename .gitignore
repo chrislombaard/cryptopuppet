@@ -16,3 +16,5 @@ snapshot
 .tox/
 .env
 .cache/
+settings_local.py
+node_modules

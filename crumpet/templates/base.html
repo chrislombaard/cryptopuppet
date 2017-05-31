@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+{% load get_files from webpack_loader %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+    <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+    <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+    <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+    <!--[if gt IE 8]><!-->
+    <html class="no-js">
+    <!--<![endif]-->
+
+    <head>
+        <meta charset="UTF-8">
+        <title>{% if request.user.is_authenticated %}Crypto Muppet{% else %}Sign up{% endif %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta id="django-static-dir" path="{{ STATIC_URL }}">
+        <meta name="description"
+              content="An automated crypto-currency trading bot that hooks into the poloniex exchange. It was born to
+                make profit."/>
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+    </head>
+
+    <body>
+
+    {% block header %}
+        {% include "crumpet/header.html" %}
+    {% endblock header %}
+
+    {% block content %}
+    {% endblock content %}
+
+    {% block footer %}
+        {% include "crumpet/footer.html" %}
+    {% endblock footer %}
+
+    </body>
+</html>

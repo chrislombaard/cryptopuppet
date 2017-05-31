@@ -1,0 +1,38 @@
+{% load i18n %}
+
+{% if user.is_authenticated %}
+    <div>
+        <header>
+            <div>
+                <span>
+                    <a href="{% url "account_logout" %}">{% trans "Logout" %}</a>
+                </span>
+                <nav role="navigation" aria-label="Main Navigation">
+                    <ul class="Header">
+                        <li>
+                            <a href="{% url "crumpet:dashboard" %}">{% trans "Dashboard" %}</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+    </div>
+{% else %}
+    <header class="Section Section--first {{ modifier_classes }}">
+        <span class="Header-login" data-hook="header-logout">
+            <a class="Header-textLink" href="{% url "account_login" %}">
+                {% trans "Login" %}
+            </a>
+        </span>
+        <nav class="Header-container Header-container--simple" role="menubar">
+            <div class="Footer-logo">
+                <a href="{% url "crumpet:home" %}">
+                    <div class="Logo Logo--stacked Logo--smallStacked">
+                        <span class="Logo-name"><span class="Logo-bold">CRYPTO</span>PUPPET</span>
+                        <span class="Logo-companyDescription">{% trans "A crypto currency trading bot"%}</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
+    </header>
+{% endif %}

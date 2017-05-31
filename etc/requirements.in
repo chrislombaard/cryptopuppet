@@ -1,1 +1,4 @@
 django
+django-allauth
+poloniex
+django-webpack-loader

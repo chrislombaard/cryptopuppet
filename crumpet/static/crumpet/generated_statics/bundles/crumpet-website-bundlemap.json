@@ -1,0 +1,1 @@
+{"status":"error","error":"EntryModuleNotFoundError","message":"Entry module not found: Error: Cannot resolve 'file' or 'directory' /Users/chrislombaard/Documents/bitcoin/cryptopuppet/mote/projects/crumpet/website/src/main.js in /Users/chrislombaard/Documents/bitcoin/cryptopuppet","publicPath":"/static/crumpet/generated_statics/bundles/"}
