@@ -1,0 +1,17 @@
+[run]
+branch = True
+cover_pylib = False
+source = crumpet
+omit =
+    */migrations/*
+    */management/*
+    */test_*
+    */mocks.py*
+    *conftest.py*
+    */__init__.py
+    */examples/*
+    */wsgi.py
+    */settings.py
+
+[report]
+show_missing = True

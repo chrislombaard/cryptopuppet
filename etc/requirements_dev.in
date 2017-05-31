@@ -1,0 +1,15 @@
+-r requirements.in
+pip-tools
+tox
+pylint
+pylint_django
+coverage
+django_coverage_plugin
+docutils
+flake8
+flake8-isort
+mypy
+sphinx
+sphinx_rtd_theme
+sphinxcontrib-fulltoc
+coveralls
