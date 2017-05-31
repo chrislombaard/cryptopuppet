@@ -3,4 +3,4 @@ An automated crypto-currency trading bot that hooks into the poloniex exchange. 
 a profit.
 '''
 
-__version__ = '0.1.dev0'
+__version__ = '0.1.dev1'
