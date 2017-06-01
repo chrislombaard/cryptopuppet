@@ -21,7 +21,7 @@ from project import settings
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
-    url(r"^", include("crumpet.urls", namespace="crumpet")),
+    url(r"^", include("crumpet.urls", namespace="crumpet"))
 ]
 
 

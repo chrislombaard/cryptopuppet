@@ -2,6 +2,34 @@
 {% load i18n %}
 
 {% block content %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
+    <form class="Card Form" id="account_form" method="POST"
+          action="{% url "crumpet:account" %}">
+        <div class="TitleItem CardItem">
+            <h2 class="TitleItem-category">
+                {% trans "Account Settings" %}
+            </h2>
+        </div>
+        <div class="CardItem">
+            <div class="CardItem-contentCenter">
+                {% csrf_token %}
+                <div class="Field-group">
+                    {% include "crumpet/includes/field.html" with field=form.exchange %}
+                    {% include "crumpet/includes/field.html" with field=form.api_key %}
+                    {% include "crumpet/includes/field.html" with field=form.api_secret %}
+                </div>
+            </div>
+        </div>
+        <div class="CardItem Btn-group">
+            <button class="Btn"type="submit">{% trans "Save Account Settings" %}</button>
+        </div>
+    </form>
 
 {% endblock %}

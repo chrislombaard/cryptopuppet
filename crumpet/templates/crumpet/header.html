@@ -13,6 +13,11 @@
                             <a href="{% url "crumpet:dashboard" %}">{% trans "Dashboard" %}</a>
                         </li>
                     </ul>
+                     <ul class="Header">
+                        <li>
+                            <a href="{% url "crumpet:account" %}">{% trans "Account" %}</a>
+                        </li>
+                    </ul>
                 </nav>
             </div>
         </header>
@@ -26,7 +31,7 @@
         </span>
         <nav class="Header-container Header-container--simple" role="menubar">
             <div class="Footer-logo">
-                <a href="{% url "crumpet:home" %}">
+                <a href="{% url "crumpet:dashboard" %}">
                     <div class="Logo Logo--stacked Logo--smallStacked">
                         <span class="Logo-name"><span class="Logo-bold">CRYPTO</span>PUPPET</span>
                         <span class="Logo-companyDescription">{% trans "A crypto currency trading bot"%}</span>
