@@ -1,8 +1,7 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render_to_response, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView, FormView
-from requests import request
 from poloniex import Poloniex
 
 from crumpet.profiles import forms, models
@@ -26,8 +25,6 @@ class DashboardView(TemplateView):
             polo = Poloniex(key=user_account.api_key, secret=user_account.api_secret)
             balance = polo.returnBalances()
             ticker = polo.returnTicker()
-            import pdb;
-            pdb.set_trace()
 
             balance = {key: value for key, value in balance.items() if float(value) != 0}
             context['balance'] = balance
