@@ -1,4 +1,4 @@
 django
 django-allauth
-poloniex
+poloniex==0.4.3
 django-webpack-loader

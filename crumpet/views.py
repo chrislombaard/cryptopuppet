@@ -25,8 +25,13 @@ class DashboardView(TemplateView):
         if user_account.api_key and user_account.api_secret:
             polo = Poloniex(key=user_account.api_key, secret=user_account.api_secret)
             balance = polo.returnBalances()
+            ticker = polo.returnTicker()
+            import pdb;
+            pdb.set_trace()
+
+            balance = {key: value for key, value in balance.items() if float(value) != 0}
             context['balance'] = balance
-            print("I have %s ETH!" % balance['ETH'])
+            # context['ticker'] = ticker
 
         return self.render_to_response(context)
 
