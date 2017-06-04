@@ -26,7 +26,7 @@ up:
 deps:
 	@pip-sync requirements_dev.txt
 
-run: deps
+run:
 	@DJANGO_SETTINGS_MODULE="project.settings" ./manage.py runserver 0.0.0.0:8001
 
 lint: deps

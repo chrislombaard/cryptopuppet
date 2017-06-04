@@ -1,4 +1,6 @@
 django
 django-allauth
 django-webpack-loader
-urllib2
+poloniex==0.4.3
+numpy
+TA-Lib==0.4.10
