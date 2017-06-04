@@ -1,4 +1,4 @@
 django
 django-allauth
-poloniex
 django-webpack-loader
+urllib2

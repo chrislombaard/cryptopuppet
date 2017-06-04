@@ -22,7 +22,7 @@ class DashboardView(TemplateView):
         ).first()
 
         if user_account.api_key and user_account.api_secret:
-            polo = Poloniex(key=user_account.api_key, secret=user_account.api_secret)
+            polo = Poloniex(apikey=user_account.api_key, secret=user_account.api_secret)
             balance = polo.returnBalances()
             ticker = polo.returnTicker()
 
@@ -56,5 +56,37 @@ class AccountPageView(FormView):
 
         context = self.get_context_data()
         return render(self.request, "crumpet/account.html", context=context)
+
+
+class BacktestingView(TemplateView):
+    template_name = "crumpet/backtesting.html"
+
+
+class PortfolioView(TemplateView):
+    template_name = "crumpet/portfolio.html"
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        if not request.user.is_authenticated():
+            return redirect(reverse('account_login'))
+        polo = Poloniex()
+        print(polo.returnTicker()['BTC_ETH'])
+
+        user_account = models.UserAccount.objects.filter(
+            user=self.request.user
+        ).first()
+
+        if user_account.api_key and user_account.api_secret:
+            polo = Poloniex(key=user_account.api_key, secret=user_account.api_secret)
+            trade_history = polo.returnTradeHistory()
+
+            # balance = {key: value for key, value in balance.items() if float(value) != 0}
+            context['trade_history'] = trade_history
+            # context['ticker'] = ticker
+
+        return self.render_to_response(context)
+
+
+
 
 

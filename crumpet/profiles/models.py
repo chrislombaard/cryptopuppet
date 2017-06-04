@@ -104,7 +104,7 @@ class Ticker(models.Model):
     }
     """
     # symbol = models.CharField(max_length=30, verbose_name="Ticker Symbol")
-    id = models.CharField(max_length=20)
+    ticker_id = models.CharField(max_length=20)
     last = AmountField()
     lowest_ask = AmountField()
     highest_bid = AmountField()
