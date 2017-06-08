@@ -1,0 +1,27 @@
+.form-row {
+    padding: 10px 0;
+    display: flex;
+}
+
+.form-row label {
+    padding-right: 10px;
+    text-align: left;
+}
+
+.form-row input {
+    flex: 1;
+}
+
+.form-col {
+    padding: 10px 0;
+    display: flex;
+}
+
+.form-col input {
+    flex: 1;
+
+}
+
+input, label {
+    display:block;
+}

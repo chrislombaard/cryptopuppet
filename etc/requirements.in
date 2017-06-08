@@ -4,3 +4,4 @@ django-webpack-loader
 poloniex==0.4.3
 numpy
 TA-Lib==0.4.10
+forex-python==0.3.2

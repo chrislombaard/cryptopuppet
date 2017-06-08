@@ -1,0 +1,8 @@
+{% extends "prksite/home.html" %}
+{% load i18n %}
+{% load prksite_tags %}
+
+{% block content %}
+    <div>{% trans "Join the Team" %}</div>
+    {% get_listing_posts "join-our-team" %}
+{% endblock %}

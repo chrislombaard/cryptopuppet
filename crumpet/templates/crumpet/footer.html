@@ -1,22 +1,8 @@
 {% load i18n %}
 
-<footer class="Footer">
-    <div class="Footer-line"></div>
-    <div class="Footer-topHorizontal"></div>
-    <footer class="Footer-content">
-        <div class="Footer-logo">
-            <a href="{% url "crumpet:dashboard" %}">
-                <div class="Logo">
-                    <div class="Logo-type">
-                        <span class="Logo-name"><span
-                                class="Logo-bold">CRYPTO</span>PUPPET</span>
-                        <span class="Logo-companyDescription">A Poloniex trading bot</span>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="Footer-copyright">
-            <p class="Footer-paragraphs">&copy;&nbsp;Copyright Cypto Puppet {% now "Y" %}</p>
-        </div>
-    </footer>
+
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted">&copy;&nbsp;Copyright Cyptopuppet | A crypto currency trading bot. {% now "Y" %}</p>
+    </div>
 </footer>

@@ -1,0 +1,26 @@
+{% load i18n %}
+
+<div class="horizontal-line">
+    <hr>
+</div>
+<div id="{{ name }}-location" class="Location-item">
+    <div class="title">
+        <h2 class="Location-heading-2">
+            {% trans city %}
+            <br>{% trans country %}
+        </h2>
+    </div>
+    <div class="Location-subsection">
+        <div class="Location-description">
+            <h3 class="Location-heading-3">
+                {% if number %}<strong>{{ number }}</strong><br>{% endif %}
+                {% if address_1 %}{{ address_1 }}<br>{% endif %}
+                {% if address_2 %}{{ address_2 }}<br>{% endif %}
+                {{ address_3 }}
+            </h3>
+        </div>
+        <div class="Location-button">
+            <a href="{{ maps_link }}" class="Button">{% trans "Get Directions" %}</a>
+        </div>
+    </div>
+</div>

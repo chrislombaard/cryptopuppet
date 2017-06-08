@@ -1,0 +1,212 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+  font-family: "Helvetica Neue",Arial,sans-serif;
+  font-size: 14px;
+}
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+  padding: 60px 15px 0;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+code {
+  font-size: 80%;
+}
+
+.navbar {
+  position: fixed;
+  min-height: 50px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+}
+.form-row {
+    padding: 10px 0;
+    display: flex;
+}
+
+.form-row label {
+    padding-right: 10px;
+    text-align: left;
+}
+
+.form-row input {
+    flex: 1;
+}
+
+.form-col {
+    padding: 10px 0;
+    display: flex;
+}
+
+.form-col input {
+    flex: 1;
+
+}
+
+input, label {
+    display:block;
+}
+/* General Site styles */
+.main-page {
+  padding-right: 5vw;
+  padding-left: 5vw; }
+
+div {
+  display: block; }
+
+.title {
+  display: inline-block;
+  width: 35%;
+  margin: 0;
+  float: left; }
+
+.horizontal-line {
+  position: relative;
+  padding: 17px 0; }
+
+body {
+  margin: 0; }
+
+hr {
+  height: 1px;
+  border: none;
+  background-color: #bbbbbb;
+  color: #bbbbbb; }
+
+h1 {
+  margin: .67em 0;
+  color: #000000;
+  font-family: Helvetica Neue, Arial, sans-serif;
+  font-size: 5.73vw;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1em;
+  text-transform: none; }
+
+h3 {
+  margin: 0;
+  color: #000000;
+  font-family: Georgia, serif;
+  font-size: 1.563vw;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -.02em;
+  line-height: 1.6em;
+  text-transform: none; }
+
+/* pattern styles */
+.Navbar {
+  max-width: 100%;
+  padding-right: 5vw;
+  padding-left: 5vw;
+  margin: 5vw auto; }
+
+.navbar-wrapper {
+  display: inline-block;
+  width: 60%;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  bottom: 0; }
+
+.navbar-main {
+  font-family: "Helvetica Neue",Arial,sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 12px;
+  letter-spacing: 0em;
+  text-transform: none;
+  line-height: 1em; }
+
+.navbar-item-div {
+  display: inline-block;
+  margin: 0; }
+
+.navbar-item {
+  color: #919191;
+  text-decoration: none;
+  margin-left: 15px;
+  transition: color 0.2s; }
+  .navbar-item.active {
+    color: black;
+    transition: color 0.2s; }
+  .navbar-item.index {
+    margin-left: 0; }
+  .navbar-item:hover {
+    color: black;
+    transition: color 0.2s; }
+
+.navbar-logo {
+  display: inline-block;
+  float: right; }
+
+.navbar-image {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 18px; }

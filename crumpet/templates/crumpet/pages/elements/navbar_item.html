@@ -1,0 +1,7 @@
+{% load i18n %}
+
+<div id="{{ name }}" class="navbar-item-div">
+    <a href="{% url url %}" class="navbar-item {% if name == "Our Work" %}index active{% endif %}">
+        <span>{% trans name %}</span>
+    </a>
+</div>

@@ -1,0 +1,48 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form class="form-signin" id="signup_form" method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            <h2 class="form-signin-heading">{% trans "Please sign up" %}</h2>
+            <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>
+                .{% endblocktrans %}</p>
+
+            <label for="id_username">{% trans "Username:" %}</label>
+            <input type="text" name="username" class="form-control" placeholder="Username" autofocus="autofocus"
+                   minlength="1"
+                   maxlength="150" id="id_username">
+            <label for="id_email" class="sr-only">{% trans "E-mail (optional):" %}</label>
+            <input type="email" id="inputEmail" class="form-control" name="email" placeholder="E-mail address"
+                   autofocus="">
+            <label for="id_password1">Password:</label>
+            <input type="password" class="form-control" name="password1" placeholder="Password" required=""
+                   id="id_password1">
+            <label for="id_password2" class="sr-only">{% trans "Password (again):" %}</label>
+            <input type="password" class="form-control" name="password2" placeholder="Password (again)" required=""
+                   id="id_password2">
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="remember-me"> {% trans "Remember me" %}
+                </label>
+            </div>
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Sign in" %}</button>
+        </form>
+    </div>
+{% endblock %}
+
+
+

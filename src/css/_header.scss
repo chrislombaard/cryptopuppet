@@ -1,0 +1,59 @@
+.Navbar {
+    max-width: 100%;
+    padding-right: 5vw;
+    padding-left: 5vw;
+    margin: 5vw auto;
+}
+
+.navbar {
+    &-wrapper{
+        display: inline-block;
+        width: 60%;
+        margin-top: 6px;
+        margin-bottom: 6px;
+        bottom: 0;
+    }
+    &-main {
+        font-family: "Helvetica Neue",Arial,sans-serif;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 12px;
+        letter-spacing: 0em;
+        text-transform: none;
+        line-height: 1em;
+    }
+    &-item-div {
+        display: inline-block;
+        margin: 0;
+    }
+    &-item {
+        color: #919191;
+        text-decoration: none;
+        margin-left: 15px;
+        transition: color 0.2s;
+
+        &.active {
+            color: black;
+            transition: color 0.2s
+        }
+
+        &.index {
+            margin-left: 0;
+        }
+
+        &:hover {
+            color: black;
+            transition: color 0.2s
+        }
+    }
+    &-logo {
+        display: inline-block;
+        float: right;
+    }
+    &-image {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 18px;
+    }
+}
