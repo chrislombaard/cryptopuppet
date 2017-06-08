@@ -1,5 +1,6 @@
 from datetime import datetime
 import time
+from typing import List
 
 import numpy
 import talib
@@ -25,15 +26,25 @@ class Wallet(object):
         self.assets = assets
         self.currency = currency
         self.fee = fee
-        self.starting_assets = 100
-        self.starting_currency = 100
+        self.starting_assets = assets
+        self.starting_currency = currency
         self.initial_investment = 0
 
     def record_buy(self, buy_amount, price):
+        '''
+        Records the buy order transaction in the wallet.
+        :param price: The current or closing price of the instrument.
+        :param buy_amount: The amount to buy.
+        '''
         self.assets += buy_amount
         self.currency -= (buy_amount * price)
 
     def record_sell(self, sell_amount, price):
+        '''
+        Records the sell order transaction in the wallet.
+        :param price: The current or closing price of the instrument.
+        :param sell_amount: The amount to sell.
+        '''
         self.assets -= sell_amount
         self.currency += (sell_amount * price)
 
@@ -68,33 +79,57 @@ class ToTheMoonStrategy(object):
     '''
 
     def __init__(self, instrument: str, sma_period: float, ema_period: float):
+        '''
+        The strategy is initialized.
+        :param ema_period: period of the exponential moving average.
+        :param sma_period: period of the simple moving average.
+        :param instrument: The crypto-currency the bot will use to trade against BTC.
+        '''
         print(str(datetime.now()) + '|===================================================================|')
         print(str(datetime.now()) + '|-------------------- To The Moon And Back v0.1 --------------------|')
         print(str(datetime.now()) + '|===================================================================|')
         self.sma_period = sma_period
         self.ema_period = ema_period
         self.instrument = instrument
-        self.ema_above = False
 
-    def decide(self, price, ema, sma, wallet):
+    def decide(self, price: float, ema: List, sma: List, wallet: Wallet):
+        '''
+        The function the bot uses to decide whether to BUY or SELL.
+        :param wallet: The wallet used by the bot.
+        :param price: The current closing price of the instrument.
+        :param ema: The array of EMA.
+        :param sma: The array of SMA.
+        '''
         max_buy_amount = wallet.max_buy_amount(price)
         max_sell_amount = wallet.max_sell_amount()
 
         ema_len = len(ema)
-
-        if ema[ema_len - 2] > sma[ema_len - 2] and ema[ema_len - 1] < sma[ema_len - 1]:
-            if max_buy_amount >= MINIMUM_AMOUNT:
-                self.buy(max_buy_amount, price, wallet)
-        elif ema[ema_len - 2] < sma[ema_len - 2] and ema[ema_len - 1] > sma[ema_len - 1]:
-            if max_sell_amount >= MINIMUM_AMOUNT:
-                self.sell(max_sell_amount, price, wallet)
+        if ema_len > 1:
+            if ema[ema_len - 2] > sma[ema_len - 2] and ema[ema_len - 1] < sma[ema_len - 1]:
+                if max_buy_amount >= MINIMUM_AMOUNT:
+                    self.buy(max_buy_amount, price, wallet)
+            elif ema[ema_len - 2] < sma[ema_len - 2] and ema[ema_len - 1] > sma[ema_len - 1]:
+                if max_sell_amount >= MINIMUM_AMOUNT:
+                    self.sell(max_sell_amount, price, wallet)
 
     def buy(self, amount: float, price: float, wallet: Wallet):
+        '''
+        The buy order is made and logged in the wallet.
+        :param wallet: The wallet used by the bot.
+        :param price: The current closing price of the instrumemt.
+        :param amount: The amount of the asset the bot should buy
+        '''
         print(str(datetime.now()) + '| Order # POLONIEX ' + self.instrument + '/BTC BUY ' + str(
             amount) + ' at ' + str(price) + ' traded')
         wallet.record_buy(amount, price)
 
     def sell(self, amount: float, price: float, wallet: Wallet):
+        '''
+        The sell order is made and logged in the wallet.
+        :param wallet: The wallet used by the bot.
+        :param price: The current closing price of the instrumemt.
+        :param amount: The amount of the asset the bot should buy
+        '''
         print(str(datetime.now()) + '| Order # POLONIEX ' + self.instrument + '/BTC SELL ' + str(
             amount) + ' at ' + str(price) + ' traded')
         wallet.record_sell(amount, price)

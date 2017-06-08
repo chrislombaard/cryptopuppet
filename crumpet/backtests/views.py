@@ -20,6 +20,7 @@ class BacktestingView(FormView):
         sma_period = form.cleaned_data['sma_period']
         ema_period = form.cleaned_data['ema_period']
         instrument = form.cleaned_data['instrument']
+
         wallet = Wallet(assets=100, currency=100, instrument=instrument, fee=trading_fee)
         bot = Tradebot(
             wallet=wallet,
