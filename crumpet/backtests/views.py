@@ -20,6 +20,7 @@ class BacktestingView(FormView):
         sma_period = form.cleaned_data['sma_period']
         ema_period = form.cleaned_data['ema_period']
         instrument = form.cleaned_data['instrument']
+        print("Hello")
 
         wallet = Wallet(assets=100, currency=100, instrument=instrument, fee=trading_fee)
         bot = Tradebot(
@@ -28,6 +29,6 @@ class BacktestingView(FormView):
             instrument=instrument, period=int(period),
             start_date=start_date, end_date=end_date,
             sma_period=sma_period, ema_period=ema_period)
-        bot.start()
-
+        data = bot.start()
+        context['data'] = data
         return render(self.request, self.template_name, context=context)

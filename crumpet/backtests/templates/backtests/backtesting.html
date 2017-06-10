@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block scripts %}
+    <script src="/static/bundles/bundle.js"></script>
+{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <form method="POST" action="{% url "backtests:backtesting" %}">
+    <div id="ajax-page" class="container">
+        <form id="ajax-form" method="POST" action="{% url "backtests:backtesting" %}">
             {% csrf_token %}
             <div class="form-row">
                 {% include "crumpet/includes/field.html" with field=form.exchange %}
@@ -23,9 +27,9 @@
                 {% include "crumpet/includes/field.html" with field=form.mo_period %}
                 {% include "crumpet/includes/field.html" with field=form.mo_sensitivity %}
             </div>
-
-
         </form>
     </div>
+    {{ data }}
+    <div id="container"></div>
 
 {% endblock %}

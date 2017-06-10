@@ -36,6 +36,8 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <link rel="stylesheet" href="/static/bundles/styles.css">
+    {% block styles-extra %}
+    {% endblock %}
 
 </head>
 
@@ -57,8 +59,8 @@
     {% include "crumpet/footer.html" %}
 {% endblock footer %}
 
-{% block javascript %}
-    <script src="static/bundles/bundle.js"></script>
+{% block scripts %}
+    <script src="/static/bundles/bundle.js"></script>
 {% endblock %}
 
 </body>

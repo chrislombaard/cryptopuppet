@@ -6,7 +6,25 @@ import numpy
 import talib
 from poloniex import Poloniex
 
+import plotly
+import plotly.plotly as py
+import plotly.graph_objs as go
+
+
 MINIMUM_AMOUNT = 0.0001
+
+
+class Annotation(object):
+    '''
+    This class keeps track of the annotations.
+    '''
+
+    def __init__(self):
+        self.text = []
+
+    @property
+    def text_data(self):
+        return self.text
 
 
 class Wallet(object):
@@ -92,7 +110,7 @@ class ToTheMoonStrategy(object):
         self.ema_period = ema_period
         self.instrument = instrument
 
-    def decide(self, price: float, ema: List, sma: List, wallet: Wallet):
+    def decide(self, price: float, ema: List, sma: List, wallet: Wallet) -> str:
         '''
         The function the bot uses to decide whether to BUY or SELL.
         :param wallet: The wallet used by the bot.
@@ -108,13 +126,18 @@ class ToTheMoonStrategy(object):
             if ema[ema_len - 2] > sma[ema_len - 2] and ema[ema_len - 1] < sma[ema_len - 1]:
                 if max_buy_amount >= MINIMUM_AMOUNT:
                     self.buy(max_buy_amount, price, wallet)
+                    return "bought"
             elif ema[ema_len - 2] < sma[ema_len - 2] and ema[ema_len - 1] > sma[ema_len - 1]:
                 if max_sell_amount >= MINIMUM_AMOUNT:
                     self.sell(max_sell_amount, price, wallet)
+                    return "sold"
+
+        return "None"
 
     def buy(self, amount: float, price: float, wallet: Wallet):
         '''
         The buy order is made and logged in the wallet.
+        :param plot: The plot object used to keep track of the plotting data.
         :param wallet: The wallet used by the bot.
         :param price: The current closing price of the instrumemt.
         :param amount: The amount of the asset the bot should buy
@@ -122,10 +145,12 @@ class ToTheMoonStrategy(object):
         print(str(datetime.now()) + '| Order # POLONIEX ' + self.instrument + '/BTC BUY ' + str(
             amount) + ' at ' + str(price) + ' traded')
         wallet.record_buy(amount, price)
+        # record plot label
 
     def sell(self, amount: float, price: float, wallet: Wallet):
         '''
         The sell order is made and logged in the wallet.
+        :param plot: The plot object used to keep track of the plotting data.
         :param wallet: The wallet used by the bot.
         :param price: The current closing price of the instrumemt.
         :param amount: The amount of the asset the bot should buy
@@ -209,21 +234,32 @@ class Tradebot(object):
             start=self.start_date, end=self.end_date
         )
         first_tick = Tick(chart_data[0])
+        print(str(datetime.now()) + '| Starting price ' + first_tick.+ '|')
+        plot = Plot()
         self.wallet.calculate_initial_investment(first_tick.close)
         close_list = []
-
+        dates = []
+        open_data = []
+        high_data = []
+        low_data = []
+        close_data = []
+        sma = []
+        ema = []
+        labels = []
         # Start loop
         for tick in chart_data:
             tick = Tick(tick)
-            close_list.append(tick.close)
-            # date2.append(date2.__len__())
-            n_close_list = numpy.array(close_list, dtype=float)
-            sma = talib.SMA(n_close_list, self.strategy.sma_period)
-            ema = talib.EMA(n_close_list, self.strategy.ema_period)
+            plot.text.append("")
+            open_data.append(tick.open)
+            high_data.append(tick.high)
+            low_data.append(tick.low)
+            close_data.append(tick.close)
 
-            # plt.plot(date2, n_close_list)
-            # plt.plot(date2, sma)
-            # plt.plot(date2, ema)
+            dates.append(dates.__len__())
+            n_close_data = numpy.array(close_data, dtype=float)
+            sma = talib.SMA(n_close_data, self.strategy.sma_period)
+            ema = talib.EMA(n_close_data, self.strategy.ema_period)
+
             print(str(datetime.now()) + '|===================================================================|')
             # print(str(datetime.now()) + '| Mode: Backtest, Uptime: ' + str(datetime.now() - self.start_time))
             print(str(datetime.now()) + '| ' + str(self.period) + ' tick - High: ' + str(tick.high) + ' Low: ' +
@@ -236,7 +272,41 @@ class Tradebot(object):
             print(str(datetime.now()) + "| The current price: " + str(tick.close))
 
             if sma[len(sma) - 1] != 'nan' and ema[len(ema) - 1] != 'nan':
-                self.strategy.decide(tick.close, sma, ema, self.wallet)
+                decision = self.strategy.decide(tick.close, sma, ema, self.wallet)
+                if decision:
+                    if decision == "bought":
+                        labels.append("BUY")
+                    elif decision == "sold":
+                        labels.append("SOLD")
+                    elif decision == "none":
+                        labels.append("-")
+            else:
+                labels.append("-")
+
+        # data = list(zip(date2, close_list))
+
+        trace = go.Candlestick(x=dates,
+                               open=open_data,
+                               high=high_data,
+                               low=low_data,
+                               close=close_data)
+        data_2 = [
+            go.Scatter(
+                x=dates,
+                y=sma,
+                mode='lines+text',
+                name='Lines and Text',
+                text=labels,
+                textposition='top'
+            ),
+            go.Scatter(x=dates, y=ema),
+            go.Scatter(x=dates, y=close_data)
+        ]
+        data = [trace]
+        py.sign_in("chrislombaard", "r2rPOS1mlz5VfXsY4rP6")
+        py.plot(data)
+        py.plot(data_2)
+        return data
 
     def stop(self):
         pass

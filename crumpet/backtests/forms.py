@@ -1,4 +1,6 @@
+import datetime
 from django import forms
+from django.core.validators import RegexValidator
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -23,12 +25,25 @@ class ToTheMoonStrategyForm(forms.Form):
     )
     start_date = forms.DateField(
         required=True,
-        widget=forms.SelectDateWidget()
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "customDate": "true",
+                "placeholder": _("yyyy/mm/dd"),
+                "required": "required"
+            }
+        )
     )
-
     end_date = forms.DateField(
         required=True,
-        widget=forms.SelectDateWidget()
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "customDate": "true",
+                "placeholder": _("yyyy/mm/dd"),
+                "required": "required"
+            }
+        )
     )
     trading_fee = forms.CharField(
         required=True,
