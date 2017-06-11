@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import time
 from typing import List
 
@@ -10,8 +10,20 @@ import plotly
 import plotly.plotly as py
 import plotly.graph_objs as go
 
+from tornado.gen import coroutine
 
 MINIMUM_AMOUNT = 0.0001
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 
 class Annotation(object):
@@ -32,7 +44,7 @@ class Wallet(object):
     This class keeps track of the current funds that a bot can utilize in trading.
     '''
 
-    def __init__(self, assets: float, currency: float, instrument: str, fee: float):
+    def __init__(self, assets: float, currency: float, instrument: str, fee: float = 0.25):
         '''
         This function initializes a Classification object.
         :param fee: The maximum percentage fee taken by the exchange per order.
@@ -86,8 +98,11 @@ class Wallet(object):
         '''
         self.initial_investment = (self.starting_assets * price) + self.starting_currency
 
-    def percent_profit(self, price):
+    def percent_btc_profit(self, price):
         return ((((self.assets * price) + self.currency) - self.initial_investment) / self.initial_investment) * 100
+
+    def total_btc(self, tick):
+        return (self.assets * tick.close) + self.currency
 
 
 class ToTheMoonStrategy(object):
@@ -96,21 +111,25 @@ class ToTheMoonStrategy(object):
     when the bot should buy or sell a given asset.
     '''
 
-    def __init__(self, instrument: str, sma_period: float, ema_period: float):
+    def __init__(self, instrument: str, time: datetime, sma_period: float = 25, ema_period: float = 13):
         '''
         The strategy is initialized.
         :param ema_period: period of the exponential moving average.
         :param sma_period: period of the simple moving average.
         :param instrument: The crypto-currency the bot will use to trade against BTC.
         '''
-        print(str(datetime.now()) + '|===================================================================|')
-        print(str(datetime.now()) + '|-------------------- To The Moon And Back v0.1 --------------------|')
-        print(str(datetime.now()) + '|===================================================================|')
+        time.strftime("%Y-%m-%d %H:%M:%S")
+        print(bcolors.OKGREEN + str(time) +
+              '|===================================================================|' + bcolors.ENDC)
+        print(bcolors.OKGREEN + str(time) +
+              '|-------------------- To The Moon And Back v0.1 --------------------|' + bcolors.ENDC)
+        print(bcolors.OKGREEN + str(time) +
+              '|===================================================================|' + bcolors.ENDC)
         self.sma_period = sma_period
         self.ema_period = ema_period
         self.instrument = instrument
 
-    def decide(self, price: float, ema: List, sma: List, wallet: Wallet) -> str:
+    def decide(self, timer: str, price: float, ema: List, sma: List, wallet: Wallet) -> str:
         '''
         The function the bot uses to decide whether to BUY or SELL.
         :param wallet: The wallet used by the bot.
@@ -121,20 +140,19 @@ class ToTheMoonStrategy(object):
         max_buy_amount = wallet.max_buy_amount(price)
         max_sell_amount = wallet.max_sell_amount()
 
-        ema_len = len(ema)
-        if ema_len > 1:
-            if ema[ema_len - 2] > sma[ema_len - 2] and ema[ema_len - 1] < sma[ema_len - 1]:
+        if len(ema) > 1 and len(sma) > 1:
+            if ema[-2] > sma[-2] and ema[-1] < sma[-1]:
                 if max_buy_amount >= MINIMUM_AMOUNT:
-                    self.buy(max_buy_amount, price, wallet)
-                    return "bought"
-            elif ema[ema_len - 2] < sma[ema_len - 2] and ema[ema_len - 1] > sma[ema_len - 1]:
+                    self.buy(timer, max_buy_amount, price, wallet, timer)
+                    return "buy"
+            elif ema[-2] < sma[-2] and ema[-1] > sma[-1]:
                 if max_sell_amount >= MINIMUM_AMOUNT:
-                    self.sell(max_sell_amount, price, wallet)
-                    return "sold"
+                    self.sell(timer, max_sell_amount, price, wallet, timer)
+                    return "sell"
 
-        return "None"
+        return "none"
 
-    def buy(self, amount: float, price: float, wallet: Wallet):
+    def buy(self, timer: str, amount: float, price: float, wallet: Wallet, time: datetime):
         '''
         The buy order is made and logged in the wallet.
         :param plot: The plot object used to keep track of the plotting data.
@@ -142,12 +160,13 @@ class ToTheMoonStrategy(object):
         :param price: The current closing price of the instrumemt.
         :param amount: The amount of the asset the bot should buy
         '''
-        print(str(datetime.now()) + '| Order # POLONIEX ' + self.instrument + '/BTC BUY ' + str(
-            amount) + ' at ' + str(price) + ' traded')
+        # TODO: Use last price not close price for live bot you FUCK.
+        print(bcolors.OKGREEN + timer + '| Order # POLONIEX ' + self.instrument + '/BTC BUY ' + str(
+            amount) + ' at ' + str(price) + ' traded' + bcolors.ENDC)
         wallet.record_buy(amount, price)
         # record plot label
 
-    def sell(self, amount: float, price: float, wallet: Wallet):
+    def sell(self, timer: str, amount: float, price: float, wallet: Wallet, time: datetime):
         '''
         The sell order is made and logged in the wallet.
         :param plot: The plot object used to keep track of the plotting data.
@@ -155,8 +174,8 @@ class ToTheMoonStrategy(object):
         :param price: The current closing price of the instrumemt.
         :param amount: The amount of the asset the bot should buy
         '''
-        print(str(datetime.now()) + '| Order # POLONIEX ' + self.instrument + '/BTC SELL ' + str(
-            amount) + ' at ' + str(price) + ' traded')
+        print(bcolors.OKGREEN + timer + '| Order # POLONIEX ' + self.instrument + '/BTC SELL ' + str(
+            amount) + ' at ' + str(price) + ' traded' + bcolors.ENDC)
         wallet.record_sell(amount, price)
 
 
@@ -175,16 +194,38 @@ class Tick(object):
           'weightedAverage': '0.09434676'
           },
     '''
+    # Live tick
+    '''
+    {
+        "BTC_LTC": 
+            {
+                "last": "0.0251", 
+                "lowestAsk": "0.02589999", 
+                "highestBid": "0.0251", 
+                "percentChange": "0.02390438",
+                "baseVolume": "6.16485315", 
+                "quoteVolume": "245.82513926"
+            },
+    }
+    '''
 
-    def __init__(self, tick_data):
-        self.date = int(tick_data.get('date'))
-        self.high = float(tick_data.get('high'))
-        self.low = float(tick_data.get('low'))
-        self.open = float(tick_data.get('open'))
-        self.close = float(tick_data.get('close'))
-        self.volume = float(tick_data.get('volume'))
-        self.quote_volume = float(tick_data.get('quoteVolume'))
-        self.weighted_average = float(tick_data.get('weightedAverage'))
+    def __init__(self, data):
+        if 'last' in data:
+            self.close = float(data.get('last'))
+            self.lowest_ask = float(data.get('lowestAsk'))
+            self.highest_bid = float(data.get('highestBid'))
+            self.percent_change = float(data.get('percentChange'))
+            self.base_volume = float(data.get('baseVolume'))
+            self.quote_volume = float(data.get('quoteVolume'))
+        else:
+            self.date = int(data.get('date'))
+            self.high = float(data.get('high'))
+            self.low = float(data.get('low'))
+            self.open = float(data.get('open'))
+            self.close = float(data.get('close'))
+            self.volume = float(data.get('volume'))
+            self.quote_volume = float(data.get('quoteVolume'))
+            self.weighted_average = float(data.get('weightedAverage'))
 
 
 class Tradebot(object):
@@ -192,7 +233,7 @@ class Tradebot(object):
     This class performs all the actions of required of a trading bot.
     '''
 
-    def __init__(self, wallet: Wallet, strategy: str, instrument: str, period: int, **kwargs) -> None:
+    def __init__(self, mode: str, wallet: Wallet, strategy: str, instrument: str, period: int, **kwargs) -> None:
         '''
         This function initializes a Classification object.
         :param fee: The maximum percentage fee taken by the exchange per order.
@@ -201,22 +242,36 @@ class Tradebot(object):
         :param strategy: The BUY/SELL strategy the bot will use.
         :param instrument: The crypto-currency the bot will use to trade against BTC.
         '''
-        self.mode = 'backtest'
+        self.mode = mode
         self.market = Poloniex()
         self.period = period
-        self.start_time = datetime.now()
+        self.start_time = datetime.datetime.now()
+        self.timer = self.start_time
         self.minimum_amount = 0.01
         self.currency_pair = instrument + '_BTC'
         self.last_short = 0
         self.last_long = 0
         self.tickers = []
-        self.start_date = time.mktime(kwargs.get('start_date').timetuple())
-        self.end_date = time.mktime(kwargs.get('end_date').timetuple())
+        self.wins = 0
+        self.losses = 0
+        self.total = 0
+        self.old_buy_price = 0
+
+        if mode == 'backtest':
+            self.start_date = time.mktime(kwargs.get('start_date').timetuple())
+            self.end_date = time.mktime(kwargs.get('end_date').timetuple())
+        sma_period = 25
+        ema_period = 13
+        if kwargs.get('sma_period') == '':
+            sma_period = 25
+
+        if kwargs.get('ema_period') == '':
+            ema_period = 13
 
         if strategy == 'To The Moon':
             strategy = ToTheMoonStrategy(
-                instrument=instrument, sma_period=float(kwargs.get('sma_period')),
-                ema_period=float(kwargs.get('ema_period')))
+                instrument=instrument, sma_period=float(sma_period),
+                ema_period=float(ema_period), time=self.start_time)
 
         self.strategy = strategy
         self.wallet = wallet
@@ -227,15 +282,69 @@ class Tradebot(object):
     def restart(self):
         pass
 
+    def increment_timer(self):
+        self.timer += datetime.timedelta(minutes=self.period / 60)
+
+    @coroutine
+    def start_live_backtest(self):
+        timer = self.timer.strftime("%Y-%m-%d %H:%M:%S")
+        start_tick = Tick(self.market.returnTicker()['BTC_' + self.wallet.instrument])
+        self.wallet.calculate_initial_investment(start_tick.close)
+        print(timer + '| Starting price ' + str(start_tick.close) + '|')
+
+        last_list = []
+        dates = []
+        buys = []
+        sells = []
+        sma = []
+        ema = []
+
+        while True:
+            tick = Tick(self.market.returnTicker()['BTC_' + self.wallet.instrument])
+            last_list.append(tick.close)
+            dates.append(tick.date)
+            n_last_data = numpy.array(last_list, dtype=float)
+            sma = talib.SMA(n_last_data, self.strategy.sma_period)
+            ema = talib.EMA(n_last_data, self.strategy.ema_period)
+
+            self.display_stats(timer, start_tick, tick, ema, sma)
+            self.increment_timer()
+
+            if (((tick.close / start_tick.close) - 1) * 100) > 0:
+                print(bcolors.OKGREEN + timer + '| Bot vs. Buy and Hold: ' +
+                      str(format(((self.wallet.percent_btc_profit(tick.close) / (
+                          ((tick.close / start_tick.close) - 1) * 100)) - 1) * 100, '.2f')) + ' %)' + bcolors.ENDC)
+
+            if self.wins + self.losses > 0:
+                print(bcolors.OKGREEN + str(time) + "| WINS: " + str(self.wins) + " LOSSES: " +
+                      str(self.losses) + " Total TRADES: " + str(self.wins + self.losses) + " (" +
+                      str(format((self.wins / (self.wins + self.losses) * 100), '.2f')) + "%)" + bcolors.ENDC)
+
+            if sma[-1] != 'nan' and ema[-1] != 'nan':
+                order = self.strategy.decide(timer, tick.close, sma, ema, self.wallet)
+
+            if order is "buy":
+                self.old_buy_price = tick.close
+                buys.append([len(dates) - 1, tick.close])
+            elif order is "sell":
+                if tick.close < self.old_buy_price:
+                    self.losses += 1
+                else:
+                    self.wins += 1
+                sells.append([len(dates) - 1, tick.close])
+
+            time.sleep(self.period)
+
+    @coroutine
     def start(self):
-        self.start_clock()
+        timer = self.timer.strftime("%Y-%m-%d %H:%M:%S")
         chart_data = self.market.returnChartData(
             currencyPair=str('BTC_' + self.wallet.instrument), period=int(self.period),
             start=self.start_date, end=self.end_date
         )
         first_tick = Tick(chart_data[0])
-        print(str(datetime.now()) + '| Starting price ' + first_tick.+ '|')
-        plot = Plot()
+        print(timer + '| Starting price ' + str(first_tick.close) + '|')
+        # plot = Plot()
         self.wallet.calculate_initial_investment(first_tick.close)
         close_list = []
         dates = []
@@ -243,73 +352,97 @@ class Tradebot(object):
         high_data = []
         low_data = []
         close_data = []
+        buys = []
+        sells = []
         sma = []
         ema = []
         labels = []
         # Start loop
         for tick in chart_data:
             tick = Tick(tick)
-            plot.text.append("")
+            # plot.text.append("")
             open_data.append(tick.open)
             high_data.append(tick.high)
             low_data.append(tick.low)
             close_data.append(tick.close)
 
-            dates.append(dates.__len__())
+            dates.append(tick.date)
+
             n_close_data = numpy.array(close_data, dtype=float)
             sma = talib.SMA(n_close_data, self.strategy.sma_period)
             ema = talib.EMA(n_close_data, self.strategy.ema_period)
 
-            print(str(datetime.now()) + '|===================================================================|')
-            # print(str(datetime.now()) + '| Mode: Backtest, Uptime: ' + str(datetime.now() - self.start_time))
-            print(str(datetime.now()) + '| ' + str(self.period) + ' tick - High: ' + str(tick.high) + ' Low: ' +
-                  str(tick.low))
-            print(str(datetime.now()) + '| SMA: ' + str(sma[len(sma) - 1]) + ' EMA: ' + str(ema[len(ema) - 1]))
-            print(str(datetime.now()) + '| Balance: ' + str(self.wallet.assets) + ' ' + self.wallet.instrument + ' ('
-                  + str(self.wallet.assets * tick.close) + ') ' + str(self.wallet.currency) + ' BTC')
-            print(str(datetime.now()) + '| Total BTC: ' + str((self.wallet.assets * tick.close) + self.wallet.currency)
-                  + ' BTC  PROFIT: (' + str(self.wallet.percent_profit(tick.close)) + ' %)')
-            print(str(datetime.now()) + "| The current price: " + str(tick.close))
+            self.display_stats(timer, first_tick, tick, ema, sma)
 
-            if sma[len(sma) - 1] != 'nan' and ema[len(ema) - 1] != 'nan':
-                decision = self.strategy.decide(tick.close, sma, ema, self.wallet)
-                if decision:
-                    if decision == "bought":
-                        labels.append("BUY")
-                    elif decision == "sold":
-                        labels.append("SOLD")
-                    elif decision == "none":
-                        labels.append("-")
-            else:
-                labels.append("-")
+            if (((tick.close / first_tick.close) - 1) * 100) > 0:
+                print(bcolors.OKGREEN + timer + '| Bot vs. Buy and Hold: ' +
+                      str(format(((self.wallet.percent_btc_profit(tick.close) / (
+                          ((tick.close / first_tick.close) - 1) * 100)) - 1) * 100, '.2f')) + ' %)' + bcolors.ENDC)
 
-        # data = list(zip(date2, close_list))
+            if self.wins + self.losses > 0:
+                print(bcolors.OKGREEN + timer + "| WINS: " + str(self.wins) + " LOSSES: " +
+                      str(self.losses) + " Total TRADES: " + str(self.wins + self.losses) + " (" +
+                      str(format((self.wins / (self.wins + self.losses) * 100), '.2f')) + "%)" + bcolors.ENDC)
 
-        trace = go.Candlestick(x=dates,
-                               open=open_data,
-                               high=high_data,
-                               low=low_data,
-                               close=close_data)
-        data_2 = [
-            go.Scatter(
-                x=dates,
-                y=sma,
-                mode='lines+text',
-                name='Lines and Text',
-                text=labels,
-                textposition='top'
-            ),
-            go.Scatter(x=dates, y=ema),
-            go.Scatter(x=dates, y=close_data)
-        ]
-        data = [trace]
-        py.sign_in("chrislombaard", "r2rPOS1mlz5VfXsY4rP6")
-        py.plot(data)
-        py.plot(data_2)
+            if sma[-1] != 'nan' and ema[-1] != 'nan':
+                order = self.strategy.decide(timer, tick.close, sma, ema, self.wallet)
+
+            if order is "buy":
+                self.old_buy_price = tick.close
+                buys.append([dates[-1], tick.close])
+            elif order is "sell":
+                if tick.close < self.old_buy_price:
+                    self.losses += 1
+                else:
+                    self.wins += 1
+                sells.append([dates[-1], tick.close])
+
+        data = {
+            "close": list(zip(dates, close_data)),
+            "sma": list(zip(dates, sma)),
+            "ema": list(zip(dates, ema)),
+            "buys": buys,
+            "sells": sells
+        }
         return data
 
     def stop(self):
         pass
 
-    def start_clock(self):
-        self.start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    @staticmethod
+    def buy_and_hold(price, wallet):
+        return ((((
+                      wallet.starting_assets * price) + wallet.starting_currency) - wallet.initial_investment) / wallet.initial_investment) * 100
+
+    @staticmethod
+    def buy_and_hold_efficiency(tick, first_tick):
+        return ((tick.close / first_tick.close) - 1) * 100
+
+    def display_stats(self, timer, first_tick, tick, ema, sma):
+        print(timer + '|===================================================================|')
+
+        if self.mode is 'backtest':
+            print(timer + '| ' + str(self.period) + ' tick - High: ' + str(tick.high) + ' Low: ' +
+                  str(tick.low))
+
+        print(timer + '| SMA: ' + str(sma[-1]) + ' EMA: ' + str(ema[-1]))
+
+        print(timer + '| Balance: ' + str(self.wallet.assets) + ' ' + self.wallet.instrument + ' ('
+              + str(self.wallet.assets * tick.close) + ') ' + str(self.wallet.currency) + ' BTC')
+
+        print(bcolors.OKGREEN + timer
+              + '| Total BTC: ' + str(self.wallet.total_btc(tick))
+              + '|BTC  PROFIT: (' + str(format(self.wallet.percent_btc_profit(tick.close), '.2f')) + ' %)'
+              + bcolors.ENDC)
+
+        print(timer + "| The current price: " + str(tick.close))
+
+        print("FIRST CLOSE: " + str(first_tick.close))
+
+        print(timer + "| The buy and hold efficiency:  " +
+              str(format(self.buy_and_hold_efficiency(tick, first_tick), '.2f')) + "%")
+
+        tick_ratio = ((tick.close / first_tick.close) - 1) * 100
+        if tick_ratio > 0:
+            print(bcolors.OKGREEN + timer + '| Bot vs. Buy and Hold: ' +
+                  str(format((self.wallet.percent_btc_profit(tick.close) / tick_ratio), '.2f')) + ' %)' + bcolors.ENDC)

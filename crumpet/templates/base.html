@@ -13,7 +13,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{% if request.user.is_authenticated %}Crypto Muppet{% else %}Sign up{% endif %}</title>
+    <title>{% if request.user.is_authenticated %}Crypto Puppet{% else %}Sign up{% endif %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta id="django-static-dir" path="{{ STATIC_URL }}">
     <meta name="description"
@@ -61,6 +61,7 @@
 
 {% block scripts %}
     <script src="/static/bundles/bundle.js"></script>
+    {#    <script src="/static/highcharts/highcharts.js"></script>#}
 {% endblock %}
 
 </body>

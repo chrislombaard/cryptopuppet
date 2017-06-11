@@ -28,7 +28,14 @@ INSTRUMENTS = (
     ("XRP", _("Ripple")),
     ("XMR", _("Monero")),
     ("LTC", _("LiteCoin")),
+    ("LSK", _("LISK")),
     ("STEEM", _("STEEM"))
+)
+
+MODES = (
+    ("backtest", _("Backtest")),
+    ("livetest", _("Live Backtest")),
+    ("live", _("Live"))
 )
 
 

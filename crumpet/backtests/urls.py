@@ -11,4 +11,11 @@ urlpatterns = [
         )),
         name="backtesting"
     ),
+    url(
+        r"^live/$",
+        login_required(views.LiveTestView.as_view(
+            template_name="backtests/livetest.html"
+        )),
+        name="livetest"
+    ),
 ]

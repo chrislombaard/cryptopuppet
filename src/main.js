@@ -1,15 +1,119 @@
 console.log("Hello from app.js!");
 
 require("./styles.scss");
-// var $ = require("jquery");
 
+require("jquery-serializejson");
+var $ = require("jquery");
+
+// Load Highcharts
 var Highcharts = require('highcharts');
-// Load module after Highcharts is loaded
+
+// Alternatively, this is how to load Highstock or Highmaps
+var Highcharts = require('highcharts/highstock');
+// var Highcharts = require('highcharts/highmaps');
+
+// This is how a module is loaded. Pass in Highcharts as a parameter.
 require('highcharts/modules/exporting')(Highcharts);
 
-// Load module after Highcharts is loaded
-require('highcharts/modules/exporting')(Highcharts);
-var Highcharts = require('highcharts/highstock');
+/**
+ * Javascript for View WorkFlows Page
+ */
+// $(document).ready(function () {
+//
+//     //########################################################################
+//     // Upload Image Code
+//     //########################################################################
+//
+//     // Submit post on submit
+//     $('#ajax-form').on('submit', function (event) {
+//         event.preventDefault();
+//         console.log("form submitted!");  // sanity check
+//         create_post();
+//     });
+//
+//     // AJAX for posting
+//     function create_post() {
+//         console.log("create post is working!") // sanity check
+//         var form_data = $('#ajax-form').serializeJSON()
+//         console.log(form_data);
+//         $.ajax({
+//             url: $('#ajax-form').attr('action'), // the endpoint
+//             type: $('#ajax-form').attr('method'), // http method
+//             data: form_data,
+//
+//             // handle a successful response
+//             success: function (json) {
+//
+//                 var oneval = $(json).filter('#container').text();
+//
+//                 // var result = $(json).find('#container');
+//                 // var data = $.parseHTML(json)
+//
+//                 // $("#container").html(json.);
+//                 // var html = $(document).find('#container').innerHTML;
+//                 console.log(oneval); // log the returned json to the console
+//                 console.log("success"); // another sanity check
+//             },
+//
+//             // handle a non-successful response
+//             error: function(json) {
+//                 $("#container").html("Something went wrong!");
+//             }
+//         });
+//     }
+//
+//      // This function gets cookie with a given name
+//     function getCookie(name) {
+//         var cookieValue = null;
+//         if (document.cookie && document.cookie != '') {
+//             var cookies = document.cookie.split(';');
+//             for (var i = 0; i < cookies.length; i++) {
+//                 var cookie = $.trim(cookies[i]);
+//                 // Does this cookie string begin with the name we want?
+//                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+//                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//                     break;
+//                 }
+//             }
+//         }
+//         return cookieValue;
+//     }
+//     var csrftoken = getCookie('csrftoken');
+//
+//     /*
+//     The functions below will create a header with csrftoken
+//     */
+//
+//     function csrfSafeMethod(method) {
+//         // these HTTP methods do not require CSRF protection
+//         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+//     }
+//     function sameOrigin(url) {
+//         // test that a given url is a same-origin URL
+//         // url could be relative or scheme relative or absolute
+//         var host = document.location.host; // host + port
+//         var protocol = document.location.protocol;
+//         var sr_origin = '//' + host;
+//         var origin = protocol + sr_origin;
+//         // Allow absolute or scheme relative URLs to same origin
+//         return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+//             (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+//             // or any other URL that isn't scheme relative or absolute i.e relative.
+//             !(/^(\/\/|http:|https:).*/.test(url));
+//     }
+//
+//     $.ajaxSetup({
+//         beforeSend: function(xhr, settings) {
+//             if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+//                 // Send the token to same-origin, relative URLs only.
+//                 // Send the token only if the method warrants CSRF protection
+//                 // Using the CSRFToken value acquired earlier
+//                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
+//             }
+//         }
+//     });
+//
+// });
 
 var ajaxForm = document.getElementById("ajax-form");
 
@@ -21,8 +125,8 @@ if (ajaxForm) {
     });
 }
 
-
 function processRequest() {
+
     let myHeaders = new Headers();
     myHeaders.append('X-CSRFToken', readCookie('csrftoken'));
 
@@ -34,63 +138,97 @@ function processRequest() {
     })
         .then(response => response.text())
         .then(data => {
-            let container = document.createElement('div');
-            container.innerHTML = data;
-            console.log(data)
-            let newForm = container.children[0];
-            let parent = document.getElementById("ajax-page")
-            parent.replaceChild(newForm, ajaxForm);
+            console.log('Success!');
+            processChart(data)
         })
         .catch(function (err) {
         });
-
 }
 
-Highcharts.chart('container', {
+function processChart(data) {
+    console.log('Graph successfully entered!');
+    data = JSON.parse(data);
 
-    title: {
-        text: 'Solar Employment Growth by Sector, 2010-2016'
-    },
-
-    subtitle: {
-        text: 'Source: thesolarfoundation.com'
-    },
-
-    yAxis: {
+    Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
+        chart: {
+            height: 600
+        },
         title: {
-            text: 'Number of Employees'
-        }
-    },
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
-    },
-
-    plotOptions: {
-        series: {
-            pointStart: 2010
-        }
-    },
-
-    series: [{
-        name: 'Installation',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-    }, {
-        name: 'Manufacturing',
-        data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-    }, {
-        name: 'Sales & Distribution',
-        data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-    }, {
-        name: 'Project Development',
-        data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-    }, {
-        name: 'Other',
-        data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-    }]
-
-});
+            text: 'Closing Price'
+        },
+        plotOptions: {
+            series: {
+                turboThreshold: 0
+            }
+        },
+        series: [
+            {
+                name: "Close",
+                data: data["close"],
+                tooltip: {
+                    valueDecimals: 9
+                }
+            },
+            {
+                name: "SMA",
+                data: data["sma"],
+                tooltip: {
+                    valueDecimals: 9
+                }
+            },
+            {
+                name: "SMA",
+                data: data["ema"],
+                tooltip: {
+                    valueDecimals: 9
+                }
+            },
+            {
+                name: 'buys',
+                data: data["buys"],
+                lineWidth: null,
+                marker: {
+                    enabled: true,
+                    radius: 4,
+                    fillColor: '#00ff00',
+                    symbol: 'circle',
+                    lineColor: '#FFFFFF'
+                },
+                tooltip: {
+                    valueDecimals: 9
+                },
+                states: {
+                    hover: {
+                        lineWidthPlus: 0
+                    }
+                }
+            },
+            {
+                name: 'sells',
+                data: data["sells"],
+                lineWidth: null,
+                marker: {
+                    enabled: true,
+                    radius: 4,
+                    fillColor: '#ff0000',
+                    symbol: 'circle',
+                    lineColor: '#FFFFFF'
+                },
+                tooltip: {
+                    valueDecimals: 9
+                },
+                states: {
+                    hover: {
+                        lineWidthPlus: 0
+                    }
+                }
+            }
+        ]
+    });
+}
 
 function readCookie(name, c, C, i) {
     let cookies;
@@ -109,5 +247,3 @@ function readCookie(name, c, C, i) {
 
     return cookies[name];
 }
-
-export default readCookie;

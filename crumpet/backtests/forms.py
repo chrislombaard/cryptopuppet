@@ -9,22 +9,27 @@ from crumpet.profiles import constants
 
 class ToTheMoonStrategyForm(forms.Form):
     exchange = forms.ChoiceField(
-        required=True,
+        required=False,
         label=_("Exchange"),
         choices=constants.CRYPTO_EXCHANGES
     )
     instrument = forms.ChoiceField(
-        required=True,
+        required=False,
         label=_("Instrument"),
         choices=constants.INSTRUMENTS
     )
+    mode = forms.ChoiceField(
+        required=False,
+        label=_("Mode"),
+        choices=constants.MODES
+    )
     exchange_period = forms.ChoiceField(
-        required=True,
+        required=False,
         label=_("Period"),
         choices=constants.EXCHANGE_PERIODS
     )
     start_date = forms.DateField(
-        required=True,
+        required=False,
         widget=forms.DateInput(
             attrs={
                 "type": "date",
@@ -35,7 +40,7 @@ class ToTheMoonStrategyForm(forms.Form):
         )
     )
     end_date = forms.DateField(
-        required=True,
+        required=False,
         widget=forms.DateInput(
             attrs={
                 "type": "date",
@@ -46,7 +51,7 @@ class ToTheMoonStrategyForm(forms.Form):
         )
     )
     trading_fee = forms.CharField(
-        required=True,
+        required=False,
         label=_("Trading Fee (%)"),
         widget=forms.TextInput(
             attrs={
@@ -54,15 +59,16 @@ class ToTheMoonStrategyForm(forms.Form):
             }
         ),
         max_length=100
+
     )
     strategy = forms.ChoiceField(
-        required=True,
+        required=False,
         label=_("Strategy"),
         choices=constants.STRATEGIES
     )
 
     sma_period = forms.CharField(
-        required=True,
+        required=False,
         label=_("Simple Moving Average"),
         widget=forms.TextInput(
             attrs={
@@ -73,7 +79,7 @@ class ToTheMoonStrategyForm(forms.Form):
     )
 
     ema_period = forms.CharField(
-        required=True,
+        required=False,
         label=_("Exponetial Moving Average"),
         widget=forms.TextInput(
             attrs={

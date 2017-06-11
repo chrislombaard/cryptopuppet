@@ -160,6 +160,10 @@ h3 {
   line-height: 1.6em;
   text-transform: none; }
 
+.highchart {
+  padding-top: 50px;
+  padding-bottom: 50px; }
+
 /* pattern styles */
 .Navbar {
   max-width: 100%;
