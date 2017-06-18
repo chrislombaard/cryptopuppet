@@ -1,12 +1,10 @@
 import datetime
-from typing import List
 
 import math
 import numpy
 import talib
 
 from crumpet.constants import MINIMUM_AMOUNT
-from crumpet.tick import Tick
 from crumpet.utils import bcolors
 from crumpet.wallet import Wallet
 
@@ -111,16 +109,6 @@ class ToTheMoonStrategy(BaseStrategy):
                 if max_buy_amount >= MINIMUM_AMOUNT:
                     self.buy(timer, max_buy_amount, price, wallet)
                     tick.buys.append([tick.dates[-1], tick.close[-1]])
-                    # if not tick.first_order:
-                    #     if tick.last_order == 'sell' and tick.sells[-1][1] > price:
-                    #         self.buy(timer, max_buy_amount, price, wallet)
-                    #         tick.buys.append([tick.dates[-1], tick.close[-1]])
-                    #         tick.last_order = 'buy'
-                    # else:
-                    #     tick.first_order = False
-                    #     self.buy(timer, max_buy_amount, price, wallet)
-                    #     tick.buys.append([tick.dates[-1], tick.close[-1]])
-                    #     tick.last_order = 'buy'
 
             elif self.crosses_up == 'sma':
                 if max_sell_amount >= MINIMUM_AMOUNT:
@@ -132,26 +120,6 @@ class ToTheMoonStrategy(BaseStrategy):
                         tick.losses += 1
                     else:
                         tick.wins += 1
-                    # if not tick.first_order:
-                    #     if tick.last_order == 'buy' and tick.buys[-1][1] < price:
-                    #         self.sell(timer, max_sell_amount, price, wallet)
-                    #         tick.sells.append([tick.dates[-1], tick.close[-1]])
-                    #         tick.last_order = 'sell'
-                    #
-                    #         if tick.close[-1] < tick.close[-2]:
-                    #             tick.losses += 1
-                    #         else:
-                    #             tick.wins += 1
-                    # else:
-                    #     tick.first_order = False
-                    #     self.sell(timer, max_sell_amount, price, wallet)
-                    #     tick.sells.append([tick.dates[-1], tick.close[-1]])
-                    #     tick.last_order = 'sell'
-                    #
-                    #     if tick.close[-1] < tick.close[-2]:
-                    #         tick.losses += 1
-                    #     else:
-                    #         tick.wins += 1
 
         return tick
 

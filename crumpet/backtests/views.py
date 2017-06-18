@@ -1,11 +1,7 @@
-import json
-
 import simplejson
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
-
 
 from crumpet.backtests import forms
 from crumpet.tradebot import Tradebot, Wallet
@@ -75,18 +71,4 @@ class LiveTestView(FormView):
             instrument=instrument, period=int(period),
             sma_period=sma_period, ema_period=ema_period)
         data = bot.start_live_backtest()
-        # {
-        #     title: {
-        #         text: '<span style="">drag me anywhere <br> dblclick to remove</span>',
-        #         style: {
-        #             color: 'red'
-        #         }
-        #     },
-        #     anchorX: "left",
-        #     anchorY: "top",
-        #     allowDragX: true,
-        #     allowDragY: true,
-        #     x: 515,
-        #     y: 155
-        # },
         return render(self.request, self.template_name, context=context)

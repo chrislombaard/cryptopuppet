@@ -44,13 +44,16 @@ class Tradebot(object):
         if mode == 'backtest':
             self.start_date = time.mktime(kwargs.get('start_date').timetuple())
             self.end_date = time.mktime(kwargs.get('end_date').timetuple())
-        sma_period = 25
-        ema_period = 13
+
         if kwargs.get('sma_period') == '':
             sma_period = 25
+        else:
+            sma_period = kwargs.get('sma_period')
 
         if kwargs.get('ema_period') == '':
             ema_period = 13
+        else:
+            ema_period = kwargs.get('ema_period')
 
         if strategy == 'To The Moon':
             strategy = ToTheMoonStrategy(
@@ -138,7 +141,7 @@ class Tradebot(object):
 
     @staticmethod
     def buy_and_hold_efficiency(tick):
-        return ((tick.close[0] / tick.close[-1]) - 1) * 100
+        return ((tick.close[-1] / tick.close[0]) - 1) * 100
 
     def display_stats(self, timer, tick):
         print(timer + '|===================================================================|')
@@ -157,12 +160,10 @@ class Tradebot(object):
 
         print(timer + "| The current price: " + str(tick.close[-1]))
 
-        print("FIRST CLOSE: " + str(tick.close[0]))
-
         print(timer + "| The buy and hold efficiency:  " +
               str(format(self.buy_and_hold_efficiency(tick), '.2f')) + "%")
 
-        tick_ratio = ((tick.close[0] / tick.close[0]) - 1) * 100
+        tick_ratio = ((tick.close[0] / tick.close[-1]) - 1) * 100
         if tick_ratio > 0:
             print(bcolors.OKGREEN + timer + '| Bot vs. Buy and Hold: ' +
                   str(format((self.wallet.percent_btc_profit(tick.close[-1]) / tick_ratio), '.2f')) + ' %)' + bcolors.ENDC)
