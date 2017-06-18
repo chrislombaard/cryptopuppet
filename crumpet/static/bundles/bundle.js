@@ -11668,102 +11668,6 @@ __webpack_require__(4)(Highcharts);
 /**
  * Javascript for View WorkFlows Page
  */
-// $(document).ready(function () {
-//
-//     //########################################################################
-//     // Upload Image Code
-//     //########################################################################
-//
-//     // Submit post on submit
-//     $('#ajax-form').on('submit', function (event) {
-//         event.preventDefault();
-//         console.log("form submitted!");  // sanity check
-//         create_post();
-//     });
-//
-//     // AJAX for posting
-//     function create_post() {
-//         console.log("create post is working!") // sanity check
-//         var form_data = $('#ajax-form').serializeJSON()
-//         console.log(form_data);
-//         $.ajax({
-//             url: $('#ajax-form').attr('action'), // the endpoint
-//             type: $('#ajax-form').attr('method'), // http method
-//             data: form_data,
-//
-//             // handle a successful response
-//             success: function (json) {
-//
-//                 var oneval = $(json).filter('#container').text();
-//
-//                 // var result = $(json).find('#container');
-//                 // var data = $.parseHTML(json)
-//
-//                 // $("#container").html(json.);
-//                 // var html = $(document).find('#container').innerHTML;
-//                 console.log(oneval); // log the returned json to the console
-//                 console.log("success"); // another sanity check
-//             },
-//
-//             // handle a non-successful response
-//             error: function(json) {
-//                 $("#container").html("Something went wrong!");
-//             }
-//         });
-//     }
-//
-//      // This function gets cookie with a given name
-//     function getCookie(name) {
-//         var cookieValue = null;
-//         if (document.cookie && document.cookie != '') {
-//             var cookies = document.cookie.split(';');
-//             for (var i = 0; i < cookies.length; i++) {
-//                 var cookie = $.trim(cookies[i]);
-//                 // Does this cookie string begin with the name we want?
-//                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
-//                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                     break;
-//                 }
-//             }
-//         }
-//         return cookieValue;
-//     }
-//     var csrftoken = getCookie('csrftoken');
-//
-//     /*
-//     The functions below will create a header with csrftoken
-//     */
-//
-//     function csrfSafeMethod(method) {
-//         // these HTTP methods do not require CSRF protection
-//         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-//     }
-//     function sameOrigin(url) {
-//         // test that a given url is a same-origin URL
-//         // url could be relative or scheme relative or absolute
-//         var host = document.location.host; // host + port
-//         var protocol = document.location.protocol;
-//         var sr_origin = '//' + host;
-//         var origin = protocol + sr_origin;
-//         // Allow absolute or scheme relative URLs to same origin
-//         return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
-//             (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
-//             // or any other URL that isn't scheme relative or absolute i.e relative.
-//             !(/^(\/\/|http:|https:).*/.test(url));
-//     }
-//
-//     $.ajaxSetup({
-//         beforeSend: function(xhr, settings) {
-//             if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
-//                 // Send the token to same-origin, relative URLs only.
-//                 // Send the token only if the method warrants CSRF protection
-//                 // Using the CSRFToken value acquired earlier
-//                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
-//             }
-//         }
-//     });
-//
-// });
 
 var ajaxForm = document.getElementById("ajax-form");
 
@@ -11820,26 +11724,29 @@ function processChart(data) {
                 data: data["close"],
                 tooltip: {
                     valueDecimals: 9
-                }
+                },
+                color: '#000000',
             },
             {
                 name: "SMA",
                 data: data["sma"],
                 tooltip: {
                     valueDecimals: 9
-                }
+                },
+                color: '#FF0000',
             },
             {
-                name: "SMA",
+                name: "EMA",
                 data: data["ema"],
                 tooltip: {
                     valueDecimals: 9
-                }
+                },
+                color: '#00FF00',
             },
             {
                 name: 'buys',
                 data: data["buys"],
-                lineWidth: null,
+                lineWidth: 0,
                 marker: {
                     enabled: true,
                     radius: 4,
@@ -11859,7 +11766,7 @@ function processChart(data) {
             {
                 name: 'sells',
                 data: data["sells"],
-                lineWidth: null,
+                lineWidth: 0,
                 marker: {
                     enabled: true,
                     radius: 4,

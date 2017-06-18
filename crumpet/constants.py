@@ -12,3 +12,6 @@ BOT_MODES = (
     (BotModes.LIVETEST, 'livetest'),
     (BotModes.LIVE, 'live')
 )
+
+
+MINIMUM_AMOUNT = 0.0001
