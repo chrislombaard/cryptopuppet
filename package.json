@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "highcharts": "^5.0.12",
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "jquery-serializejson": "^2.8.1"
   }
 }
